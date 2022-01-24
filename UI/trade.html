@@ -4,7 +4,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title></title>
+        <title>Trade Details</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="./assets/css/bootstrap.min.css">
@@ -18,12 +18,13 @@
             <header class="shadow-sm p-3 mb-5 bg-white rounded">
                 <nav class="navbar navbar-expand-lg navbar-light">
                     <div class="container-fluid">
-                        <a class="navbar-brand logo" href="#">EquiX</a>
+                        <a class="navbar-brand logo" href="index.html">EquiX</a>
 
                         <div class="navbar-collapse" id="navbarNavDropdown">
                             <ul class="navbar-nav">
                                 <li class="nav-item">
-                                    <a class="nav-link active header-menu-item" aria-current="page" href="index.html">Home</a>
+                                    <a class="nav-link active header-menu-item" aria-current="page"
+                                        href="index.html">Home</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link header-menu-item" href="trades.html">Trades</a>
@@ -35,17 +36,13 @@
                         </div>
                         <ul class="navbar-nav justify-content-end">
                             <li class="nav-item">
-                                <a class="nav-link header-menu-item" href="trades.html"> <button type="button" class="btn">Start
-                                        Trading</button></a>
+                                <a class="btn nav-link header-menu-item" href="trades.html">Start Trading</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#"><button type="button"
-                                        class="btn btn-outline-dark btn-login">Login</button></a>
+                                <a class="nav-link btn btn-outline-dark btn-login" href="#">Login</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#"><button type="button"
-                                        class="btn btn-dark dark-weight-btn">Sign
-                                        Up</button></a>
+                                <a href="trade.html" class="btn btn-dark dark-weight-btn">Sign Up</a>
                             </li>
                         </ul>
                     </div>
@@ -53,16 +50,28 @@
             </header>
             <main>
                 <div class="container">
-                    <div class="intro">
-                        <h1 class="main-content-title">EquiX trading</h1>
-                        <p>
-                            Welcome EquiX Trading. It is a equipment trading platform. You can trade any equiment in
-                            different categories. To name some categories include Camping Equiments, Electrical
-                            Equipments, Furniture Equipments
-                        </p>
-                        <a href="trades.html"><button type="button" class="btn btn-dark dark-weight-btn">Start Here</button></a>
+                    <div class="card trade-details">
+                        <div class="card-body">
+                            <h3 class="card-title">Camping Tent</h3>
+                            <div class="row">
+                                <div class="col-lg-5 col-md-5 col-sm-6">
+                                    <div><img src="./assets/images/camping-tent.jpeg" class="trade-details-image"
+                                            alt="camping tent"></div>
+                                </div>
+                                <div class="col-lg-7 col-md-7 col-sm-6">
+                                    <h4 class="box-title mt-5">Product description</h4>
+                                    <p>A tent is a shelter consisting of sheets of
+                                        fabric or other material draped over, attached to a frame of poles or attached
+                                        to a supporting rope. While smaller tents may be free-standing or attached to
+                                        the ground, large tents are usually anchored using guy ropes tied to stakes or
+                                        tent pegs. First used as portable homes by nomads, tents are now more often used
+                                        for recreational camping and as temporary shelters. </p>
+                                    <a href="trade.html" class="btn btn-dark dark-weight-btn">Trade</a>
+                                    <a class=" btn btn-outline-dark btn-login" href="#">Rate</a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-
                 </div>
             </main>
             <footer class="footer-theme">
@@ -95,4 +104,5 @@
             </footer>
         </div>
     </body>
+
 </html>
