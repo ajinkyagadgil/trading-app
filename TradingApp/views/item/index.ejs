@@ -1,0 +1,31 @@
+<%- include('../partials/header.ejs')%>
+<div class="container">
+    <%if(tradeItems){%>
+        <%tradeItems.forEach(tradeItem => {%>
+            <div class="card trade-categories">
+                <h5 class="card-header"><%= tradeItem.categoryName%></h5>
+                <div class="card-body">
+                    <div class="row">
+                        <%if(tradeItem.items) {%>
+                            <%tradeItem.items.forEach(item => {%>
+                                <div class="col-md-4">
+                                    <div class="card">
+                                        <img class="card-img-top" src="<%= item.itemImage%>"
+                                            alt="<%= item.itemName%>">
+                                        <div class="card-body">
+                                            <h5 class="card-title"><%= item.itemName%></h5>
+                                            <a href="/trades/<%=item.itemId%>?category=<%=tradeItem.categoryId%>" class="btn btn-dark dark-weight-btn">Trade</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            <%});%>
+                        <%}%>
+                    </div>
+                </div>
+            </div>
+        <%});%>
+    <%} else {%>
+        <p>There are no trade items</p>
+    <%}%>
+</div>
+<%- include('../partials/footer.ejs')%>
