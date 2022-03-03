@@ -82,15 +82,45 @@ const tradeItems = [
                 createdAt: DateTime.now().toLocaleString(DateTime.DATETIME_SHORT)
             },
         ]
-    },    
+    },
 ]
 
-exports.getAllTradeItems = function() {
+exports.getAllTradeItems = function () {
     return tradeItems;
 }
 
-exports.findItemById = function(categoryId, itemId) {
+exports.findItemById = function (categoryId, itemId) {
     let category = tradeItems.find(category => category.categoryId == categoryId);
     let tradeItem = category.items.find(item => item.itemId == itemId);
     return tradeItem;
+}
+
+exports.createTrade = function (item) {
+    let category = tradeItems.find(category => category.categoryName === item.categoryName);
+    item.itemId = uuidv4();
+    item.itemImage = '/images/carpentry-tape.jpeg';
+    if (category) {
+        category.items.push(item);
+    } else {
+        let tradeItem = {
+            categoryId: uuidv4(),
+            categoryName: item.categoryName,
+            items: [item]
+        }
+        tradeItems.push(tradeItem);
+    }
+}
+
+exports.deleteById = function(itemId) {
+    let tradeCategory = tradeItems.find(category => category.items.find(item => item.itemId == itemId));
+    if(tradeCategory) {
+        let itemIndex = tradeCategory.items.findIndex(item =>item.itemId == itemId);
+        if(itemIndex != -1) {
+            tradeCategory.items.splice(itemIndex, 1);
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
 }

@@ -6,7 +6,7 @@
                 <h5 class="card-header"><%= tradeItem.categoryName%></h5>
                 <div class="card-body">
                     <div class="row">
-                        <%if(tradeItem.items) {%>
+                        <%if(tradeItem.items.length) {%>
                             <%tradeItem.items.forEach(item => {%>
                                 <div class="col-md-4">
                                     <div class="card">
@@ -19,6 +19,8 @@
                                     </div>
                                 </div>
                             <%});%>
+                        <%} else {%>
+                            <p>There are no items to trade in this category</p>
                         <%}%>
                     </div>
                 </div>

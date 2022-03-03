@@ -133,6 +133,19 @@ margin-bottom: 20px;
     object-fit: contain;
 }
 
+.productDescriptionTop {
+    display: flex;
+}
+
+.productDescriptionTop .card-title {
+    flex: 1;
+}
+
+.productDescriptionTop .describe-top-btn {
+    flex: 0;
+    margin-left: 5px;
+}
+
 /*Media Queries*/
 /*Trades */
 @media (max-width: 993px) {
