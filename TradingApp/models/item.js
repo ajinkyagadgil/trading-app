@@ -91,8 +91,17 @@ exports.getAllTradeItems = function () {
 
 exports.findItemById = function (categoryId, itemId) {
     let category = tradeItems.find(category => category.categoryId == categoryId);
-    let tradeItem = category.items.find(item => item.itemId == itemId);
-    return tradeItem;
+    if (category) {
+        let tradeItem = category.items.find(item => item.itemId == itemId);
+        if (tradeItem) {
+            let item = {
+                categoryId: category.categoryId,
+                categoryName: category.categoryName,
+                item: { ...tradeItem }
+            };
+            return item;
+        }
+    }
 }
 
 exports.createTrade = function (item) {
@@ -111,16 +120,40 @@ exports.createTrade = function (item) {
     }
 }
 
-exports.deleteById = function(itemId) {
-    let tradeCategory = tradeItems.find(category => category.items.find(item => item.itemId == itemId));
-    if(tradeCategory) {
-        let itemIndex = tradeCategory.items.findIndex(item =>item.itemId == itemId);
-        if(itemIndex != -1) {
-            tradeCategory.items.splice(itemIndex, 1);
-            return true;
+exports.deleteById = function (categoryId, itemId) {
+    let tradeCategory = tradeItems.find(category => category.categoryId == categoryId);
+    if (tradeCategory) {
+        let tradeItem = tradeCategory.items.find(item => item.itemId == itemId);
+        if (tradeItem) {
+            let itemIndex = tradeCategory.items.findIndex(item => item.itemId == tradeItem.itemId);
+            if (itemIndex != -1) {
+                tradeCategory.items.splice(itemIndex, 1);
+                return true;
+            }
+            else {
+                return false;
+            }
         }
-        else{
+    } else {
+        return false;
+    }
+}
+
+exports.updateById = function (itemId, categoryId, tradeItem) {
+    let category = tradeItems.find(category => category.categoryId == categoryId);
+    if (category) {
+        category.categoryName = tradeItem.categoryName;
+        let item = category.items.find(item => item.itemId == itemId);
+        if (item) {
+            item.itemName = tradeItem.itemName;
+            item.itemDescription = tradeItem.itemDescription;
+
+            return true;
+        } else {
             return false;
         }
+    }
+    else {
+        return false;
     }
 }

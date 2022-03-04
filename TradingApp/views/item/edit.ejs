@@ -1,0 +1,32 @@
+<%- include('../partials/header.ejs')%>
+<div class="container">
+    <form class="new-trade-form" method="POST" action="/trades/<%= tradeItem.item.itemId%>?_method=PUT&category=<%= tradeItem.categoryId%>">
+        <!-- <div class="form-group">
+            <label for="exampleFormControlSelect1">Category</label>
+            <select class="form-control" id="exampleFormControlSelect1">
+                <option>Camping Equipments</option>
+                <option>Electrical Equipments</option>
+                <option>Carpentry Equipments</option>
+            </select>
+        </div> -->
+       
+        <div class="form-group">
+            <label for="category">Category</label>
+            <input type="text" class="form-control" name="categoryName" value="<%= tradeItem.categoryName%>" id="category" placeholder="Category">
+        </div>
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" class="form-control" name="itemName" value="<%= tradeItem.item.itemName%>" id="name" placeholder="Name">
+        </div>
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea class="form-control" name="itemDescription" id="description" rows="3"
+                placeholder="Enter description"><%= tradeItem.item.itemDescription%></textarea>
+        </div>
+        <div class="form-group btn-create-trade">
+            <button type="submit" class="btn btn-outline-success">Edit Trade</button>
+        </div>
+    </form>
+
+</div>
+<%- include('../partials/footer.ejs')%>

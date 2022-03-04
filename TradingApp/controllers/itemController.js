@@ -7,8 +7,15 @@ exports.index = (req, res) => {
 }
 
 exports.findItemById = (req, res) => {
-    let tradeItem = model.findItemById(req.query.category, req.params.id);
-    res.render('./item/show', { tradeItem });
+    let itemId = req.params.id;
+    let tradeItem = model.findItemById(req.query.category, itemId);
+    if (tradeItem) {
+        res.render('./item/show', { tradeItem });
+    } else {
+        let err = new Error('Cannot find item with id ' + itemId + "in the category");
+        err.status = 404;
+        next(err);
+    }
 }
 
 exports.new = (req, res) => {
@@ -22,12 +29,41 @@ exports.create = (req, res) => {
 }
 
 exports.delete = (req, res, next) => {
-    let id = req.params.id;
-    if (model.deleteById(id)) {
+    let itemId = req.params.id;
+    let categoryId = req.query.category;
+    if (model.deleteById(categoryId, itemId)) {
         res.redirect('/trades');
     } else {
-        // let err = new Error('Cannot find story with id ' + id);
-        // err.status = 404;
-        // next(err);
+        let err = new Error('Cannot find item with id ' + itemId + "in the category");
+        err.status = 404;
+        next(err);
+    }
+}
+
+exports.edit = (req, res, next) => {
+    let itemId = req.params.id;
+    let categoryId = req.query.category;
+    let tradeItem = model.findItemById(categoryId, itemId);
+    if (tradeItem) {
+        res.render('./item/edit', { tradeItem });
+    } else {
+        let err = new Error('Cannot find item with id ' + itemId + "in the category");
+        err.status = 404;
+        next(err);
+    }
+};
+
+exports.update = (req, res) => {
+    //
+    let tradeItem = req.body;
+    let itemId = req.params.id;
+    let categoryId = req.query.category;
+    if (model.updateById(itemId, categoryId, tradeItem)) {
+        // res.redirect('/trades/' + itemId + "?category=" + categoryId)
+        res.redirect('/trades');
+    } else {
+        let err = new Error('Cannot find item with id ' + itemId + "in the category");
+        err.status = 404;
+        next(err);
     }
 }

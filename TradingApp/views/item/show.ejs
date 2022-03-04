@@ -4,24 +4,28 @@
             <div class="card-body">
                 <div class="productDescriptionTop">
                     <h3 class="card-title">
-                        <%= tradeItem.itemName%>
+                        <%= tradeItem.item.itemName%>
                     </h3>
+                    <a class="describe-top-btn btn btn-dark"
+                        href="/trades/<%= tradeItem.item.itemId%>/edit?category=<%=tradeItem.categoryId%>">Edit</a>
                     <form>
-                        <button type="submit" class="describe-top-btn btn btn-danger" type="submit" formmethod="GET" formaction="/stories/<%= tradeItem.itemId%>/edit">Edit</button>
-                        <button type="submit" class="describe-top-btn btn btn-danger" formmethod="POST" formaction="/trades/<%= tradeItem.itemId%>?_method=DELETE">Delete</button>
+
+                        <button type="submit" class="describe-top-btn btn btn-danger" formmethod="POST"
+                            formaction="/trades/<%= tradeItem.item.itemId%>?_method=DELETE&category=<%=tradeItem.categoryId%>">Delete</button>
+                    </form>
                 </div>
                 <div class="row">
                     <div class="col-lg-5 col-md-5 col-sm-6">
-                        <div><img src="<%= tradeItem.itemImage%>" class="trade-details-image"
-                                alt="<%= tradeItem.itemName%>"></div>
+                        <div><img src="<%= tradeItem.item.itemImage%>" class="trade-details-image"
+                                alt="<%= tradeItem.item.itemName%>"></div>
                     </div>
                     <div class="col-lg-7 col-md-7 col-sm-6">
                         <h4 class="box-title mt-5">Product description</h4>
                         <p>
-                            <%= tradeItem.itemDescription%>
+                            <%= tradeItem.item.itemDescription%>
                         </p>
-                        <a href="trades.html" class="btn btn-dark dark-weight-btn">Trade</a>
-                        <a class=" btn btn-outline-dark btn-login" href="trades.html">Rate</a>
+                        <a href="/trades" class="btn btn-dark dark-weight-btn">Trade</a>
+                        <a class=" btn btn-outline-dark btn-login" href="/trades">Rate</a>
                     </div>
                 </div>
             </div>

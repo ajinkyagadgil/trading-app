@@ -3,6 +3,7 @@ const express = require('express');
 const morgan = require('morgan');
 const methodOverride = require('method-override');
 const itemRoutes = require('./routes/itemRoutes');
+const mainRoutes = require('./routes/mainRoutes');
 
 //create app
 const app = express();
@@ -19,25 +20,22 @@ app.use(morgan('tiny'));
 app.use(methodOverride('_method'));
 
 //routes
-app.get('/', (req, res) => {
-    res.render('index');
-});
-
 app.use('/trades', itemRoutes);
+app.use('/', mainRoutes);
 
-// app.use((req, res, next) => {
-//     let err = new Error('The server cannot locate '+req.url);
-//     err.status = 404;
-//     next(err);
-// })
-// app.use((err, req, res, next) => {
-//     if(!err.status) {
-//         err.status = 500;
-//         err.message = ("Internal Server Error");
-//     }
-//     res.status(err.status);
-//     res.render('error', {error: err});
-// });
+app.use((req, res, next) => {
+    let err = new Error('The server cannot locate '+req.url);
+    err.status = 404;
+    next(err);
+})
+app.use((err, req, res, next) => {
+    if(!err.status) {
+        err.status = 500;
+        err.message = ("Internal Server Error");
+    }
+    res.status(err.status);
+    res.render('error', {error: err});
+});
 
 //start up server
 app.listen(port, host, () => {
