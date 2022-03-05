@@ -59,7 +59,6 @@ exports.update = (req, res) => {
     let itemId = req.params.id;
     let categoryId = req.query.category;
     if (model.updateById(itemId, categoryId, tradeItem)) {
-        // res.redirect('/trades/' + itemId + "?category=" + categoryId)
         res.redirect('/trades');
     } else {
         let err = new Error('Cannot find item with id ' + itemId + "in the category");
