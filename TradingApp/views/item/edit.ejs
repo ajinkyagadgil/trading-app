@@ -1,6 +1,6 @@
 <%- include('../partials/header.ejs')%>
 <div class="container">
-    <form class="new-trade-form" method="POST" action="/trades/<%= tradeItem.item.itemId%>?_method=PUT&category=<%= tradeItem.categoryId%>">       
+    <form class="new-trade-form" method="POST" action="/trades/<%= tradeItem.item._id%>?_method=PUT&category=<%= tradeItem._id%>">       
         <div class="form-group">
             <label for="category">Category</label>
             <input type="text" class="form-control" name="categoryName" value="<%= tradeItem.categoryName%>" id="category" placeholder="Category">

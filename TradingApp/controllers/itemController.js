@@ -29,7 +29,6 @@ exports.findItemById = (req, res, next) => {
                 tradeModel.findOne({ _id: req.query.category }, { items: { $elemMatch: { _id: id } } })
                     .then(item => {
                         if (item) {
-                            console.log('Item is', item)
                             let tradeItem = {
                                 _id: category._id,
                                 categoryName: category.categoryName,
@@ -118,45 +117,132 @@ exports.create = (req, res, next) => {
             console.log(err);
             next(err);
         })
-    tradeModel.save(trade);
-    res.redirect('/trades');
 }
 
 exports.delete = (req, res, next) => {
-    let itemId = req.params.id;
+    let id = req.params.id;
     let categoryId = req.query.category;
-    if (model.deleteById(categoryId, itemId)) {
-        res.redirect('/trades');
-    } else {
-        let err = new Error('Cannot find item with id ' + itemId + "in the category");
-        err.status = 404;
-        next(err);
+    if (!id.match(/^[0-9a-fA-F]{24}/)) {
+        let err = new Error('Invalid Story id');
+        err.status = 400;
+        return next(err);
     }
+    tradeModel.findOneAndUpdate({_id:categoryId, "items._id":id}, {$pull: {items:{_id:id}}})
+    .then(tradeItem => {
+        if(tradeItem) {
+            res.redirect('/trades');
+        } else {
+                let err = new Error('Cannot find item with id ' + itemId + "in the category");
+                err.status = 404;
+                next(err);
+            }
+    })
+    .catch(err => {
+        console.log('error');
+        console.log(err);
+        next(err);
+    });
+
+    // let itemId = req.params.id;
+    // let categoryId = req.query.category;
+    // if (model.deleteById(categoryId, itemId)) {
+    //     res.redirect('/trades');
+    // } else {
+    //     let err = new Error('Cannot find item with id ' + itemId + "in the category");
+    //     err.status = 404;
+    //     next(err);
+    // }
 }
 
 exports.edit = (req, res, next) => {
-    let itemId = req.params.id;
-    let categoryId = req.query.category;
-    let tradeItem = model.findItemById(categoryId, itemId);
-    if (tradeItem) {
-        res.render('./item/edit', { tradeItem });
-    } else {
-        let err = new Error('Cannot find item with id ' + itemId + "in the category");
-        err.status = 404;
-        next(err);
+    let id = req.params.id;
+    if (!id.match(/^[0-9a-fA-F]{24}/)) {
+        let err = new Error('Invalid Story id');
+        err.status = 400;
+        return next(err);
     }
+    //tradeModel.findOne({_id:req.query.category}, {items:{$elemMatch:{_id:id}}})
+    tradeModel.findById(req.query.category)
+        .then(category => {
+            if (category) {
+                tradeModel.findOne({ _id: req.query.category }, { items: { $elemMatch: { _id: id } } })
+                    .then(item => {
+                        if (item) {
+                            let tradeItem = {
+                                _id: category._id,
+                                categoryName: category.categoryName,
+                                item: item.items[0]
+                            }
+                            res.render('./item/edit', { tradeItem });
+                        }
+                        else {
+                            let err = new Error('Cannot find a story with id ' + id);
+                            err.status = 404;
+                            next(err);
+                        }
+                    })
+                    .catch(err => next(err));
+            }
+            else {
+                let err = new Error('Cannot find a story with category ' + req.query.category);
+                err.status = 404;
+                next(err);
+            }
+        })
+        .catch(err => next(err))
+
+
+    // let itemId = req.params.id;
+    // let categoryId = req.query.category;
+    // let tradeItem = model.findItemById(categoryId, itemId);
+    // if (tradeItem) {
+    //     res.render('./item/edit', { tradeItem });
+    // } else {
+    //     let err = new Error('Cannot find item with id ' + itemId + "in the category");
+    //     err.status = 404;
+    //     next(err);
+    // }
 };
 
-exports.update = (req, res) => {
-    //
+exports.update = (req, res, next) => {
     let tradeItem = req.body;
-    let itemId = req.params.id;
+    let id = req.params.id;
     let categoryId = req.query.category;
-    if (model.updateById(itemId, categoryId, tradeItem)) {
-        res.redirect('/trades');
-    } else {
-        let err = new Error('Cannot find item with id ' + itemId + "in the category");
-        err.status = 404;
-        next(err);
+    if (!id.match(/^[0-9a-fA-F]{24}/)) {
+        let err = new Error('Invalid Story id');
+        err.status = 400;
+        return next(err);
     }
+    tradeModel.findOneAndUpdate({_id:categoryId, "items._id":id}, {$set: {
+        "items.$.itemName":tradeItem.itemName,
+        "items.$.itemDescription":tradeItem.itemDescription,
+        "categoryName":tradeItem.categoryName
+    }})
+    .then(tradeItem => {
+        if(tradeItem) {
+            res.redirect('/trades');
+        } else {
+                let err = new Error('Cannot find item with id ' + itemId + "in the category");
+                err.status = 404;
+                next(err);
+            }
+    })
+    .catch(err => {
+        console.log('error');
+        console.log(err);
+        next(err);
+    });
+
+    
+    //
+    // let tradeItem = req.body;
+    // let itemId = req.params.id;
+    // let categoryId = req.query.category;
+    // if (model.updateById(itemId, categoryId, tradeItem)) {
+    //     res.redirect('/trades');
+    // } else {
+    //     let err = new Error('Cannot find item with id ' + itemId + "in the category");
+    //     err.status = 404;
+    //     next(err);
+    // }
 }
