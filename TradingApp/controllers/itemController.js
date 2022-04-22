@@ -14,11 +14,7 @@ exports.index = (req, res, next) => {
 
 exports.findItemById = (req, res, next) => {
     let id = req.params.id;
-    if (!id.match(/^[0-9a-fA-F]{24}/)) {
-        let err = new Error('Invalid trade id');
-        err.status = 400;
-        return next(err);
-    }
+
     tradeModel.findById(req.query.category)
         .then(category => {
             if (category) {
@@ -71,7 +67,10 @@ exports.create = (req, res, next) => {
         items: [item]
     })
     tradeModel.findOneAndUpdate({ categoryName: itemBody.categoryName }, { $push: { items: item } }, { upsert: true })
-        .then(trade => res.redirect('/trades'))
+        .then(trade => {
+            req.flash('success','Trade created successfully');
+            res.redirect('/trades')
+        })
         .catch(err => {
             if (err.name === 'ValidationError') {
                 err.status = 400;
@@ -83,14 +82,11 @@ exports.create = (req, res, next) => {
 exports.delete = (req, res, next) => {
     let id = req.params.id;
     let categoryId = req.query.category;
-    if (!id.match(/^[0-9a-fA-F]{24}/)) {
-        let err = new Error('Invalid item id');
-        err.status = 400;
-        return next(err);
-    }
+
     tradeModel.findOneAndUpdate({_id:categoryId, "items._id":id}, {$pull: {items:{_id:id}}})
     .then(tradeItem => {
         if(tradeItem) {
+            req.flash('success','Trade deleted successfully');
             res.redirect('/trades');
         } else {
                 let err = new Error('Cannot find item with id ' + itemId + "in the category");
@@ -107,11 +103,7 @@ exports.delete = (req, res, next) => {
 
 exports.edit = (req, res, next) => {
     let id = req.params.id;
-    if (!id.match(/^[0-9a-fA-F]{24}/)) {
-        let err = new Error('Invalid item id');
-        err.status = 400;
-        return next(err);
-    }
+
     tradeModel.findById(req.query.category)
         .then(category => {
             if (category) {
@@ -146,11 +138,7 @@ exports.update = (req, res, next) => {
     let tradeItem = req.body;
     let id = req.params.id;
     let categoryId = req.query.category;
-    if (!id.match(/^[0-9a-fA-F]{24}/)) {
-        let err = new Error('Invalid item id');
-        err.status = 400;
-        return next(err);
-    }
+
     tradeModel.findOneAndUpdate({_id:categoryId, "items._id":id}, {$set: {
         "items.$.itemName":tradeItem.itemName,
         "items.$.itemDescription":tradeItem.itemDescription,
@@ -158,6 +146,7 @@ exports.update = (req, res, next) => {
     }})
     .then(tradeItem => {
         if(tradeItem) {
+            req.flash('success','Trade updated successfully');
             res.redirect('/trades');
         } else {
                 let err = new Error('Cannot find item with id ' + itemId + "in the category");
