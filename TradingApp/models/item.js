@@ -3,6 +3,7 @@ const Schema = mongoose.Schema;
 
 const itemSchema = new Schema({
     itemName: {type: String, required:[true, 'title is required']},
+    user:{type: Schema.Types.ObjectId, ref: 'User'},
     itemDescription: {type: String, required:[true, 'Description is required']},
     itemImage: {type: String}
 },

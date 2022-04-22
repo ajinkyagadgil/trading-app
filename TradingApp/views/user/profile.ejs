@@ -1,0 +1,26 @@
+<%- include('../partials/header.ejs')%>
+<h2>Welcome, <%= user.firstName + " " + user.lastName%></h2>
+
+<table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Category</th>
+        <th scope="col">Item Name</th>
+        <th scope="col">Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <%if(categoryItems.length > 0) {%>
+            <%categoryItems.forEach(category => {%>
+                    <tr>
+                        <td><%= category.categoryName%></td>
+                        <td><%= category.items.itemName%></td>
+                        <td><%= category.items.itemDescription%></td>
+                    </tr>
+            <%})%>
+        <%}%>
+
+    </tbody>
+  </table>
+
+<%- include('../partials/footer.ejs')%>

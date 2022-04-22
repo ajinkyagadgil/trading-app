@@ -5,6 +5,10 @@ const methodOverride = require('method-override');
 const mongoose = require('mongoose');
 const itemRoutes = require('./routes/itemRoutes');
 const mainRoutes = require('./routes/mainRoutes');
+const session = require('express-session');
+const MongoStore = require('connect-mongo');
+const flash = require('connect-flash');
+const userRoutes = require('./routes/userRoutes');
 
 //create app
 const app = express();
@@ -29,9 +33,28 @@ app.use(express.urlencoded({extended: true}));
 app.use(morgan('tiny'));
 app.use(methodOverride('_method'));
 
+app.use(session({
+    secret:'snksdskndk98khsd0likj',
+    resave: false,
+    saveUninitialized: false,
+    cookie:{maxAge: 60*60*1000},
+    store: new MongoStore({mongoUrl:'mongodb://localhost:27017/tradesdb'})
+}));
+
+app.use(flash());
+
+app.use((req, res, next) => {
+    res.locals.successMessages = req.flash('success');
+    res.locals.errorMessages = req.flash('error');
+    console.log(req.session);
+    next();
+});
+
+
 //routes
 app.use('/trades', itemRoutes);
 app.use('/', mainRoutes);
+app.use('/users', userRoutes);
 
 app.use((req, res, next) => {
     let err = new Error('The server cannot locate '+req.url);

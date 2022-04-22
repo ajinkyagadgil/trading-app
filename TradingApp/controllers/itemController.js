@@ -60,6 +60,7 @@ exports.new = (req, res) => {
 exports.create = (req, res, next) => {
     let itemBody = req.body;
     let item = new itemModel({
+        user : req.session.user,
         itemName: itemBody.itemName,
         itemDescription: itemBody.itemDescription,
         itemImage: '/images/camping-table.jpeg'
