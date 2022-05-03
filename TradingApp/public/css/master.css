@@ -146,6 +146,10 @@ margin-bottom: 20px;
     margin-left: 5px;
 }
 
+.form-width {
+    width: 30% !important;
+}
+
 /*Media Queries*/
 /*Trades */
 @media (max-width: 993px) {
