@@ -62,11 +62,11 @@ app.use((req, res, next) => {
     err.status = 404;
     next(err);
 })
-app.use((err, req, res, next) => {
-    if(!err.status) {
-        err.status = 500;
-        err.message = ("Internal Server Error");
-    }
-    res.status(err.status);
-    res.render('error', {error: err});
-});
+// app.use((err, req, res, next) => {
+//     if(!err.status) {
+//         err.status = 500;
+//         err.message = ("Internal Server Error");
+//     }
+//     res.status(err.status);
+//     res.render('error', {error: err});
+// });

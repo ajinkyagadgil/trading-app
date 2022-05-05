@@ -1,6 +1,7 @@
 const { render } = require('ejs');
 const { itemModel } = require('../models/item');
 const { tradeModel } = require('../models/item');
+const watchModel = require('../models/watch');
 
 exports.index = (req, res, next) => {
     tradeModel.find()
@@ -56,7 +57,7 @@ exports.new = (req, res) => {
 exports.create = (req, res, next) => {
     let itemBody = req.body;
     let item = new itemModel({
-        user : req.session.user,
+        user: req.session.user,
         itemName: itemBody.itemName,
         itemDescription: itemBody.itemDescription,
         itemImage: '/images/camping-table.jpeg'
@@ -68,7 +69,7 @@ exports.create = (req, res, next) => {
     })
     tradeModel.findOneAndUpdate({ categoryName: itemBody.categoryName }, { $push: { items: item } }, { upsert: true })
         .then(trade => {
-            req.flash('success','Trade created successfully');
+            req.flash('success', 'Trade created successfully');
             res.redirect('/trades')
         })
         .catch(err => {
@@ -83,22 +84,22 @@ exports.delete = (req, res, next) => {
     let id = req.params.id;
     let categoryId = req.query.category;
 
-    tradeModel.findOneAndUpdate({_id:categoryId, "items._id":id}, {$pull: {items:{_id:id}}})
-    .then(tradeItem => {
-        if(tradeItem) {
-            req.flash('success','Trade deleted successfully');
-            res.redirect('/trades');
-        } else {
+    tradeModel.findOneAndUpdate({ _id: categoryId, "items._id": id }, { $pull: { items: { _id: id } } })
+        .then(tradeItem => {
+            if (tradeItem) {
+                req.flash('success', 'Trade deleted successfully');
+                res.redirect('/trades');
+            } else {
                 let err = new Error('Cannot find item with id ' + itemId + "in the category");
                 err.status = 404;
                 next(err);
             }
-    })
-    .catch(err => {
-        console.log('error');
-        console.log(err);
-        next(err);
-    });
+        })
+        .catch(err => {
+            console.log('error');
+            console.log(err);
+            next(err);
+        });
 }
 
 exports.edit = (req, res, next) => {
@@ -139,25 +140,37 @@ exports.update = (req, res, next) => {
     let id = req.params.id;
     let categoryId = req.query.category;
 
-    tradeModel.findOneAndUpdate({_id:categoryId, "items._id":id}, {$set: {
-        "items.$.itemName":tradeItem.itemName,
-        "items.$.itemDescription":tradeItem.itemDescription,
-        "categoryName":tradeItem.categoryName
-    }})
-    .then(tradeItem => {
-        if(tradeItem) {
-            req.flash('success','Trade updated successfully');
-            res.redirect('/trades');
-        } else {
+    tradeModel.findOneAndUpdate({ _id: categoryId, "items._id": id }, {
+        $set: {
+            "items.$.itemName": tradeItem.itemName,
+            "items.$.itemDescription": tradeItem.itemDescription,
+            "categoryName": tradeItem.categoryName
+        }
+    })
+        .then(tradeItem => {
+            if (tradeItem) {
+                req.flash('success', 'Trade updated successfully');
+                res.redirect('/trades');
+            } else {
                 let err = new Error('Cannot find item with id ' + itemId + "in the category");
                 err.status = 404;
                 next(err);
             }
-    })
-    .catch(err => {
-        if (err.name === 'ValidationError') {
-            err.status = 400;
-        }
-        next(err);
-    });
+        })
+        .catch(err => {
+            if (err.name === 'ValidationError') {
+                err.status = 400;
+            }
+            next(err);
+        });
+}
+
+exports.watch = (req, res, next) => {
+    let itemId = req.params.id;
+    console.log("User is", req.session.user);
+    watchModel.findOneAndUpdate({ "user": req.session.user }, { $push: { watchedItems: itemId } }, { upsert: true })
+        .then(result => {
+            res.redirect('/users/profile');
+        })
+        .catch(err => next(err));
 }

@@ -18,4 +18,6 @@ router.get('/:id/edit', isLoggedIn, isAuthor, validateId, controller.edit);
 
 router.put('/:id', isLoggedIn, isAuthor,validateTrade,validateResult, validateId, controller.update);
 
+router.post('/:id/watch', isLoggedIn, validateId, controller.watch)
+
 module.exports = router;

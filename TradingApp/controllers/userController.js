@@ -1,6 +1,7 @@
 const User = require('../models/user');
 const {tradeModel} = require('../models/item');
 const {itemModel} = require('../models/item');
+const watchModel = require('../models/watch');
 const ObjectId = require('mongodb').ObjectId;
 
 exports.index = (req, res) => {
@@ -64,11 +65,23 @@ exports.authenticateLogin = (req, res, next) => {
 exports.profile = (req, res, next) => {
     let id = req.session.user;
 
-    Promise.all([User.findById(id), tradeModel.aggregate([ { $unwind : "$items" }, { $match : { "items.user" : ObjectId(id) } } ])])
+    Promise.all([User.findById(id), tradeModel.aggregate([ { $unwind : "$items" }, { $match : { "items.user" : ObjectId(id) } } ]),  watchModel.findOne({user: req.session.user})])
         .then(result => {
-            const [user, categoryItems] = result;
-            console.log(JSON.stringify(categoryItems));
-            res.render('./user/profile', {user, categoryItems});
+            let watchedItems = []
+            const [user, categoryItems, watchList] = result;
+            watchList.watchedItems.forEach(watchItem => {
+                tradeModel.findOne({"items._id": watchItem}, {"items":{$elemMatch:{_id: watchItem}}})
+                .then(
+                    tradeItem => {
+                        console.log(tradeItem)
+                        watchedItems.push(tradeItem.items[0]);
+                    }
+                )
+                .catch(err => next(err));
+            });
+            console.log("Watched item is", watchedItems)
+            res.render('./user/profile', {user, categoryItems, watchedItems});
+            
         })
         .catch(err => {next(err)});
 }

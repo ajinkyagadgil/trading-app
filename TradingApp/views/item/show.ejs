@@ -6,16 +6,16 @@
                     <h3 class="card-title">
                         <%= tradeItem.item.itemName%>
                     </h3>
-                    <%if(user == tradeItem.item.user) {%>
+                    <%if(user==tradeItem.item.user) {%>
                         <a class="describe-top-btn btn btn-dark"
-                        href="/trades/<%= tradeItem.item._id%>/edit?category=<%=tradeItem._id%>">Edit</a>
-                    <form>
+                            href="/trades/<%= tradeItem.item._id%>/edit?category=<%=tradeItem._id%>">Edit</a>
+                        <form>
 
-                        <button type="submit" class="describe-top-btn btn btn-danger" formmethod="POST"
-                            formaction="/trades/<%= tradeItem.item._id%>?_method=DELETE&category=<%=tradeItem._id%>">Delete</button>
-                    </form>
-                    <%}%>
-                    
+                            <button type="submit" class="describe-top-btn btn btn-danger" formmethod="POST"
+                                formaction="/trades/<%= tradeItem.item._id%>?_method=DELETE&category=<%=tradeItem._id%>">Delete</button>
+                        </form>
+                        <%}%>
+
                 </div>
                 <div class="row">
                     <div class="col-lg-5 col-md-5 col-sm-6">
@@ -27,8 +27,12 @@
                         <p>
                             <%= tradeItem.item.itemDescription%>
                         </p>
-                        <a href="/trades" class="btn btn-dark dark-weight-btn">Trade</a>
-                        <a class=" btn btn-outline-dark btn-login" href="/trades">Rate</a>
+                        <%if(user !=tradeItem.item.user) {%>
+                            <form>
+                                <button type="submit" formmethod="POST" formaction="/trades/<%= tradeItem.item._id%>/watch" class="btn btn-dark dark-weight-btn">Trade</button>
+                                <button type="submit" class=" btn btn-outline-dark btn-login" formmethod="POST" formaction="/trades/<%= tradeItem.item._id%>/watch">Watch</button>
+                            </form>
+                        <%}%>
                     </div>
                 </div>
             </div>
