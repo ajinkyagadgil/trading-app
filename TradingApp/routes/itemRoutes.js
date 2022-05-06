@@ -20,4 +20,6 @@ router.put('/:id', isLoggedIn, isAuthor,validateTrade,validateResult, validateId
 
 router.post('/:id/watch', isLoggedIn, validateId, controller.watch)
 
+router.post('/:id/unwatch', isLoggedIn, validateId, controller.unwatch)
+
 module.exports = router;

@@ -16,8 +16,9 @@ exports.index = (req, res, next) => {
 exports.findItemById = (req, res, next) => {
     let id = req.params.id;
 
-    tradeModel.findById(req.query.category)
-        .then(category => {
+    Promise.all([tradeModel.findById(req.query.category), watchModel.findOne({user: req.session.user}, {watchedItems: {$elemMatch:{itemId:id}}})])
+        .then(result => {
+            const [category, watchList] = result
             if (category) {
                 tradeModel.findOne({ _id: req.query.category }, { items: { $elemMatch: { _id: id } } })
                     .then(item => {
@@ -27,7 +28,8 @@ exports.findItemById = (req, res, next) => {
                                 categoryName: category.categoryName,
                                 item: item.items[0]
                             }
-                            res.render('./item/show', { tradeItem });
+                            console.log("In show", watchList);
+                            res.render('./item/show', { tradeItem, watchList });
                         }
                         else {
                             let err = new Error('Cannot find a item with id ' + id);
@@ -166,11 +168,36 @@ exports.update = (req, res, next) => {
 }
 
 exports.watch = (req, res, next) => {
-    let itemId = req.params.id;
-    console.log("User is", req.session.user);
-    watchModel.findOneAndUpdate({ "user": req.session.user }, { $push: { watchedItems: itemId } }, { upsert: true })
+    let id = req.params.id;
+    let itemName = req.body.itemName;
+    console.log(itemName);
+    let item= {
+        itemId: id,
+        itemName: itemName
+    }
+
+    watchModel.findOneAndUpdate({ "user": req.session.user }, { $push: { watchedItems: item } }, { upsert: true })
         .then(result => {
             res.redirect('/users/profile');
         })
         .catch(err => next(err));
+}
+
+exports.unwatch = (req, res, next) => {
+    let id = req.params.id;
+
+    watchModel.findOneAndUpdate({ "user": req.session.user, "watchedItems._id": id }, { $pull: { watchedItems: { _id: id } } })
+    .then(watchItem => {
+        if (watchItem) {
+            req.flash('success', 'Item unwatched');
+            res.redirect('/users/profile');
+        } else {
+           
+            next(err);
+        }
+    })
+    .catch(err => {
+
+        next(err);
+    });
 }

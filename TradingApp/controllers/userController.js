@@ -67,20 +67,9 @@ exports.profile = (req, res, next) => {
 
     Promise.all([User.findById(id), tradeModel.aggregate([ { $unwind : "$items" }, { $match : { "items.user" : ObjectId(id) } } ]),  watchModel.findOne({user: req.session.user})])
         .then(result => {
-            let watchedItems = []
             const [user, categoryItems, watchList] = result;
-            watchList.watchedItems.forEach(watchItem => {
-                tradeModel.findOne({"items._id": watchItem}, {"items":{$elemMatch:{_id: watchItem}}})
-                .then(
-                    tradeItem => {
-                        console.log(tradeItem)
-                        watchedItems.push(tradeItem.items[0]);
-                    }
-                )
-                .catch(err => next(err));
-            });
-            console.log("Watched item is", watchedItems)
-            res.render('./user/profile', {user, categoryItems, watchedItems});
+            console.log(watchList);
+            res.render('./user/profile', {user, categoryItems, watchList});
             
         })
         .catch(err => {next(err)});
