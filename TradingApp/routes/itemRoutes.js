@@ -18,8 +18,12 @@ router.get('/:id/edit', isLoggedIn, isAuthor, validateId, controller.edit);
 
 router.put('/:id', isLoggedIn, isAuthor,validateTrade,validateResult, validateId, controller.update);
 
-router.post('/:id/watch', isLoggedIn, validateId, controller.watch)
+router.post('/:id/watch', isLoggedIn, validateId, controller.watch);
 
-router.post('/:id/unwatch', isLoggedIn, validateId, controller.unwatch)
+router.post('/:id/unwatch', isLoggedIn, validateId, controller.unwatch);
+
+router.get('/:id/itemOffer', isLoggedIn, validateId, controller.itemOffer);
+
+router.post('/:id/itemOffer', isLoggedIn, validateId, controller.completeTrade);
 
 module.exports = router;

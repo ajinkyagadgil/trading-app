@@ -5,7 +5,15 @@ const itemSchema = new Schema({
     itemName: {type: String, required:[true, 'title is required']},
     user:{type: Schema.Types.ObjectId, ref: 'User'},
     itemDescription: {type: String, required:[true, 'Description is required']},
-    itemImage: {type: String}
+    itemImage: {type: String},
+    status:{type: String},
+    trade: {
+        itemTradedAgainstUser:{type: Schema.Types.ObjectId, ref: 'User'},
+        itemTradedAgainstId:{type: Schema.Types.ObjectId},
+        itemToTradeId:{type: Schema.Types.ObjectId},
+        itemToTradeUser: {type: Schema.Types.ObjectId, ref: 'User'}
+    }
+
 },
 {timestamps: true});
 

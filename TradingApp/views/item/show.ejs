@@ -30,7 +30,7 @@
                         <%if(user !=tradeItem.item.user) {%>
                             <form>
                                 <input type="hidden" id="itemName" name="itemName" value="<%= tradeItem.item.itemName%>">
-                                <button type="submit" formmethod="POST" formaction="/trades/<%= tradeItem.item._id%>/watch" class="btn btn-dark dark-weight-btn">Trade</button>
+                                <a href="/trades/<%= tradeItem.item._id%>/itemOffer%>" class="btn btn-dark dark-weight-btn">Trade</a>
                                 <% if(watchList) {%>
                                     <% if(watchList.watchedItems.length > 0) { %>
                                         <button type="submit" class=" btn btn-outline-dark btn-login" formmethod="POST" formaction="/trades/<%= watchList.watchedItems[0]._id%>/unwatch">Unwatch</button>

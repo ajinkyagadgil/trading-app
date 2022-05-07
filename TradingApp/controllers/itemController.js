@@ -2,6 +2,7 @@ const { render } = require('ejs');
 const { itemModel } = require('../models/item');
 const { tradeModel } = require('../models/item');
 const watchModel = require('../models/watch');
+const ObjectId = require('mongodb').ObjectId;
 
 exports.index = (req, res, next) => {
     tradeModel.find()
@@ -16,7 +17,7 @@ exports.index = (req, res, next) => {
 exports.findItemById = (req, res, next) => {
     let id = req.params.id;
 
-    Promise.all([tradeModel.findById(req.query.category), watchModel.findOne({user: req.session.user}, {watchedItems: {$elemMatch:{itemId:id}}})])
+    Promise.all([tradeModel.findById(req.query.category), watchModel.findOne({ user: req.session.user }, { watchedItems: { $elemMatch: { itemId: id } } })])
         .then(result => {
             const [category, watchList] = result
             if (category) {
@@ -62,7 +63,8 @@ exports.create = (req, res, next) => {
         user: req.session.user,
         itemName: itemBody.itemName,
         itemDescription: itemBody.itemDescription,
-        itemImage: '/images/camping-table.jpeg'
+        itemImage: '/images/camping-table.jpeg',
+        status: "Available"
     })
 
     let trade = new tradeModel({
@@ -171,7 +173,7 @@ exports.watch = (req, res, next) => {
     let id = req.params.id;
     let itemName = req.body.itemName;
     console.log(itemName);
-    let item= {
+    let item = {
         itemId: id,
         itemName: itemName
     }
@@ -187,17 +189,64 @@ exports.unwatch = (req, res, next) => {
     let id = req.params.id;
 
     watchModel.findOneAndUpdate({ "user": req.session.user, "watchedItems._id": id }, { $pull: { watchedItems: { _id: id } } })
-    .then(watchItem => {
-        if (watchItem) {
-            req.flash('success', 'Item unwatched');
-            res.redirect('/users/profile');
-        } else {
-           
+        .then(watchItem => {
+            if (watchItem) {
+                req.flash('success', 'Item unwatched');
+                res.redirect('/users/profile');
+            } else {
+
+                next(err);
+            }
+        })
+        .catch(err => {
+
             next(err);
+        });
+}
+
+//get the details of item of the other user I want to trade
+exports.itemOffer = (req, res, next) => {
+    let itemAginstId = req.params.id;
+    Promise.all([tradeModel.aggregate([{ $unwind: "$items" }, { $match: { "items.user": ObjectId(req.session.user), "items.status": "Available" } }]), tradeModel.findOne({ "items._id": itemAginstId }, { items: { $elemMatch: { _id: itemAginstId } } })])
+        .then(results => {
+            const [categoryItems, itemAgainst] = results;
+            console.log("Category is", categoryItems);
+            console.log("itemAgainst is", itemAgainst);
+            res.render('./item/tradeOffer', { categoryItems, itemAgainst })
+        })
+        .catch(err => next(err))
+}
+
+exports.completeTrade = (req, res, next) => {
+    let itemAgainstId = req.body.itemAgainstId;
+    let chosedItemId = req.params.id;
+    let itemAgainstUser = req.body.itemAgainstUser;
+
+    console.log("Item against id", itemAgainstId);
+    console.log("Chosed item is ", chosedItemId);
+    console.log("Item agaainst user ", itemAgainstUser);
+
+    Promise.all([tradeModel.findOneAndUpdate({ "items._id": chosedItemId }, {
+        $set: {
+            "items.$.status": "Pending",
+            "items.$.trade.itemTradedAgainstUser": itemAgainstUser,
+            "items.$.trade.itemTradedAgainstId": itemAgainstId,
+            "items.$.trade.itemToTradeId": chosedItemId,
+            "items.$.trade.itemToTradeUser": req.session.user
+        }
+    }),
+    tradeModel.findOneAndUpdate({ "items._id": itemAgainstId }, {
+        $set: {
+            "items.$.status": "Pending",
+            "items.$.trade.itemTradedAgainstUser": req.session.user,
+            "items.$.trade.itemTradedAgainstId": chosedItemId,
+             "items.$.trade.itemToTradeId": itemAgainstId,
+            "items.$.trade.itemToTradeUser": itemAgainstUser
         }
     })
-    .catch(err => {
+    ]).then(result => {
+        console.log(result)
+    })
+        .catch(err => next(err))
 
-        next(err);
-    });
 }
