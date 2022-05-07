@@ -222,10 +222,6 @@ exports.completeTrade = (req, res, next) => {
     let chosedItemId = req.params.id;
     let itemAgainstUser = req.body.itemAgainstUser;
 
-    console.log("Item against id", itemAgainstId);
-    console.log("Chosed item is ", chosedItemId);
-    console.log("Item agaainst user ", itemAgainstUser);
-
     Promise.all([tradeModel.findOneAndUpdate({ "items._id": chosedItemId }, {
         $set: {
             "items.$.status": "Pending",
@@ -245,8 +241,39 @@ exports.completeTrade = (req, res, next) => {
         }
     })
     ]).then(result => {
-        console.log(result)
+        res.redirect('/users/profile');
     })
         .catch(err => next(err))
+
+}
+
+exports.cancelTrade = (req, res, next) => {
+    let startedTradeItemId = req.body.startedTradeItemId;
+    let itemAgainstId = req.params.id;
+
+    console.log("Started trade id is", startedTradeItemId);
+    console.log("Aginst trade id is", itemAgainstId);
+
+    Promise.all([tradeModel.findOneAndUpdate({ "items._id": startedTradeItemId }, {
+        $set: {
+            "items.$.status": "Available",
+        },
+        $unset: {
+            "items.$.trade":""
+        }
+    }),
+    tradeModel.findOneAndUpdate({ "items._id": itemAgainstId }, {
+        $set: {
+            "items.$.status": "Available",
+        },
+        $unset: {
+            "items.$.trade":""
+        }
+    })
+    ]).then(result => {
+        res.redirect('/users/profile');
+    })
+        .catch(err => next(err))
+
 
 }

@@ -26,4 +26,6 @@ router.get('/:id/itemOffer', isLoggedIn, validateId, controller.itemOffer);
 
 router.post('/:id/itemOffer', isLoggedIn, validateId, controller.completeTrade);
 
+router.post('/:id/itemOffer/cancel', isLoggedIn, validateId, controller.cancelTrade);
+
 module.exports = router;

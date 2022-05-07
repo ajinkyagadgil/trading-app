@@ -45,8 +45,8 @@
                         <td><a href="/trades/<%= startedTrade.items._id%>?category=<%= startedTrade._id%>"><%= startedTrade.items.itemName%></a></td>
                           <td><%= startedTrade.items.status%></td>
                           <form>
-                            
-                          <td> <button type="submit" class=" btn btn-outline-dark btn-login" formmethod="POST" formaction="">Cancel Offer</button></td>
+                          <input type="hidden" id="startedTradeItemId" name="startedTradeItemId" value="<%= startedTrade.items.trade.itemTradedAgainstId%>">
+                          <td> <button type="submit" class=" btn btn-outline-dark btn-login" formmethod="POST" formaction="/trades/<%= startedTrade.items._id%>/itemOffer/cancel">Cancel Offer</button></td>
                           </form>
                       </tr>
               <%})%>
