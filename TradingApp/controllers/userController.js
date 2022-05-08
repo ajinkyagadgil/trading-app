@@ -65,9 +65,10 @@ exports.authenticateLogin = (req, res, next) => {
 exports.profile = (req, res, next) => {
     let id = req.session.user;
 
-    Promise.all([User.findById(id), tradeModel.aggregate([ { $unwind : "$items" }, { $match : { "items.user" : ObjectId(id) } } ]),  watchModel.findOne({user: req.session.user}), tradeModel.aggregate([ { $unwind : "$items" }, { $match : { "items.trade.itemTradedAgainstUser" : ObjectId(id) } } ])])
+    Promise.all([User.findById(id), tradeModel.aggregate([ { $unwind : "$items" }, { $match : { "items.user" : ObjectId(id) } } ]),  watchModel.findOne({user: req.session.user}), tradeModel.aggregate([ { $unwind : "$items" }, { $match : { "items.trade.itemToTradeUser" : ObjectId(id), "items.status":"Pending" } } ])])
         .then(result => {
             const [user, categoryItems, watchList, loggedInUserStartedTrades] = result;
+            console.log("Category items are", categoryItems);
             res.render('./user/profile', {user, categoryItems, watchList, loggedInUserStartedTrades});
             
         })

@@ -88,6 +88,8 @@ exports.delete = (req, res, next) => {
     let id = req.params.id;
     let categoryId = req.query.category;
 
+    
+
     tradeModel.findOneAndUpdate({ _id: categoryId, "items._id": id }, { $pull: { items: { _id: id } } })
         .then(tradeItem => {
             if (tradeItem) {
@@ -227,17 +229,14 @@ exports.completeTrade = (req, res, next) => {
             "items.$.status": "Pending",
             "items.$.trade.itemTradedAgainstUser": itemAgainstUser,
             "items.$.trade.itemTradedAgainstId": itemAgainstId,
-            "items.$.trade.itemToTradeId": chosedItemId,
-            "items.$.trade.itemToTradeUser": req.session.user
+
         }
     }),
     tradeModel.findOneAndUpdate({ "items._id": itemAgainstId }, {
         $set: {
             "items.$.status": "Pending",
-            "items.$.trade.itemTradedAgainstUser": req.session.user,
-            "items.$.trade.itemTradedAgainstId": chosedItemId,
-             "items.$.trade.itemToTradeId": itemAgainstId,
-            "items.$.trade.itemToTradeUser": itemAgainstUser
+             "items.$.trade.itemToTradeId": chosedItemId,
+            "items.$.trade.itemToTradeUser": req.session.user
         }
     })
     ]).then(result => {
@@ -274,6 +273,39 @@ exports.cancelTrade = (req, res, next) => {
         res.redirect('/users/profile');
     })
         .catch(err => next(err))
+}
 
+exports.manageOffer = (req, res, next) => {
+    let itemAgainstId  = req.query.itemTradedAgainstId;
+    let startedTradeItemId = req.params.id;
+    
+    Promise.all([tradeModel.findOne( {"items._id": itemAgainstId},{items:{$elemMatch:{_id:itemAgainstId}}}), tradeModel.findOne( {"items._id":startedTradeItemId},{items:{$elemMatch:{_id:startedTradeItemId}}})])
+    .then(result => {
+        const [itemAgainst, itemStarted] = result;
+        console.log("Item against", itemAgainst)
+        console.log("Item started", itemStarted)
+        res.render('./item/manage', {itemAgainst, itemStarted});
+    })
+    .catch(err => next(err))
+}
 
+exports.acceptOffer = (req, res, next) => {
+    
+    let itemAgainstId = req.body.itemAgainstId;
+    let toTradeItemId = req.params.id;
+
+    Promise.all([tradeModel.findOneAndUpdate({ "items._id": itemAgainstId }, {
+        $set: {
+            "items.$.status": "Traded"
+        }
+    }),
+    tradeModel.findOneAndUpdate({ "items._id": toTradeItemId }, {
+        $set: {
+            "items.$.status": "Traded"
+        }
+    })
+    ]).then(result => {
+        res.redirect('/users/profile');
+    })
+        .catch(err => next(err))
 }

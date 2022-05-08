@@ -141,6 +141,14 @@ margin-bottom: 20px;
     flex: 1;
 }
 
+.item-status-show {
+    font-size: 20px;
+}
+
+.item-message-show {
+    font-size: 14px;
+}
+
 .productDescriptionTop .describe-top-btn {
     flex: 0;
     margin-left: 5px;

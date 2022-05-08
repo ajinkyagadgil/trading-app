@@ -5,8 +5,10 @@
                 <div class="productDescriptionTop">
                     <h3 class="card-title">
                         <%= tradeItem.item.itemName%>
+                        <span class="item-status-show">[ <%= tradeItem.item.status%> ]</span>
+
                     </h3>
-                    <%if(user==tradeItem.item.user) {%>
+                    <%if(user==tradeItem.item.user && tradeItem.item.status != "Traded") {%>
                         <a class="describe-top-btn btn btn-dark"
                             href="/trades/<%= tradeItem.item._id%>/edit?category=<%=tradeItem._id%>">Edit</a>
                         <form>

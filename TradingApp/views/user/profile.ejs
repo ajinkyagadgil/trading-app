@@ -15,13 +15,19 @@
                     <tr>
                         <td><a href="/trades/<%= category.items._id%>?category=<%= category._id%>"><%= category.items.itemName%></a></td>
                         <td><%= category.items.status%></td>
-                        <%if(category.items.status == "Pending" ) {%>
-                       
+                        <%if(category.items.status == "Pending") {%>
+                          <%if(category.items.trade && category.items.trade.itemTradedAgainstId) {%>
                             <form>
-                          
-                              <td> <button type="submit" class=" btn btn-outline-dark btn-login" formmethod="POST" formaction="">Manage Trade</button></td>
+                              <input type="hidden" id="itemTradedAgainstId" name="itemTradedAgainstId" value="<%= category.items.trade.itemTradedAgainstId%>">
+                              <td> <button type="submit" class=" btn btn-outline-dark btn-login" formmethod="GET" formaction="/trades/<%= category.items._id%>/itemOffer/manage">Manage Trade</button></td>
                               </form>
+                        <%}else {%>
+                          <form>
+                            <input type="hidden" id="itemTradedAgainstId" name="itemTradedAgainstId" value="<%= category.items.trade.itemToTradeId%>">
+                            <td> <button type="submit" class=" btn btn-outline-dark btn-login" formmethod="GET" formaction="/trades/<%= category.items._id%>/itemOffer/manage">Manage Trade</button></td>
+                            </form>
                         <%}%>
+                          <%}%>
                     </tr>
             <%})%>
         <%}%>
@@ -45,7 +51,7 @@
                         <td><a href="/trades/<%= startedTrade.items._id%>?category=<%= startedTrade._id%>"><%= startedTrade.items.itemName%></a></td>
                           <td><%= startedTrade.items.status%></td>
                           <form>
-                          <input type="hidden" id="startedTradeItemId" name="startedTradeItemId" value="<%= startedTrade.items.trade.itemTradedAgainstId%>">
+                          <input type="hidden" id="startedTradeItemId" name="startedTradeItemId" value="<%= startedTrade.items.trade.itemToTradeId%>">
                           <td> <button type="submit" class=" btn btn-outline-dark btn-login" formmethod="POST" formaction="/trades/<%= startedTrade.items._id%>/itemOffer/cancel">Cancel Offer</button></td>
                           </form>
                       </tr>
