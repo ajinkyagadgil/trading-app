@@ -29,7 +29,6 @@ exports.findItemById = (req, res, next) => {
                                 categoryName: category.categoryName,
                                 item: item.items[0]
                             }
-                            console.log("In show", watchList);
                             res.render('./item/show', { tradeItem, watchList });
                         }
                         else {
@@ -88,7 +87,49 @@ exports.delete = (req, res, next) => {
     let id = req.params.id;
     let categoryId = req.query.category;
 
-    
+    tradeModel.findOne( {"items._id": id},{items:{$elemMatch:{_id:id}}})
+    .then(
+        tradeItem => {
+            if(tradeItem) {
+                console.log(tradeItem)
+                
+                if(tradeItem.items[0].trade) {
+                console.log(tradeItem.items[0].trade)
+                    if(tradeItem.items[0].trade.itemTradedAgainstId) {
+                        console.log("In else")
+                        tradeModel.findOneAndUpdate({"items._id": tradeItem.items[0].trade.itemTradedAgainstId }, {
+                            $set: {
+                                "items.$.status": "Available",
+                            },
+                            $unset: {
+                                "items.$.trade":""
+                            }
+                        })
+                        .then()
+                        .catch(err => next(err))
+                    }
+                    else {
+                        console.log("In else")
+                        tradeModel.findOneAndUpdate({"items._id": tradeItem.items[0].trade.itemToTradeId }, {
+                            $set: {
+                                "items.$.status": "Available",
+                            },
+                            $unset: {
+                                "items.$.trade":""
+                            }
+                        })
+                        .then()
+                        .catch(err => next(err))
+                    }
+                }
+            }
+        }
+    )
+    .catch(err => next(err))
+
+    watchModel.updateMany({"watchedItems.itemId":id},{$pull:{watchedItems:{itemId:id}}})
+    .then()
+    .catch(err=>next(err))
 
     tradeModel.findOneAndUpdate({ _id: categoryId, "items._id": id }, { $pull: { items: { _id: id } } })
         .then(tradeItem => {
@@ -102,8 +143,6 @@ exports.delete = (req, res, next) => {
             }
         })
         .catch(err => {
-            console.log('error');
-            console.log(err);
             next(err);
         });
 }
@@ -174,7 +213,6 @@ exports.update = (req, res, next) => {
 exports.watch = (req, res, next) => {
     let id = req.params.id;
     let itemName = req.body.itemName;
-    console.log(itemName);
     let item = {
         itemId: id,
         itemName: itemName
@@ -212,8 +250,6 @@ exports.itemOffer = (req, res, next) => {
     Promise.all([tradeModel.aggregate([{ $unwind: "$items" }, { $match: { "items.user": ObjectId(req.session.user), "items.status": "Available" } }]), tradeModel.findOne({ "items._id": itemAginstId }, { items: { $elemMatch: { _id: itemAginstId } } })])
         .then(results => {
             const [categoryItems, itemAgainst] = results;
-            console.log("Category is", categoryItems);
-            console.log("itemAgainst is", itemAgainst);
             res.render('./item/tradeOffer', { categoryItems, itemAgainst })
         })
         .catch(err => next(err))
@@ -249,10 +285,6 @@ exports.completeTrade = (req, res, next) => {
 exports.cancelTrade = (req, res, next) => {
     let startedTradeItemId = req.body.startedTradeItemId;
     let itemAgainstId = req.params.id;
-
-    console.log("Started trade id is", startedTradeItemId);
-    console.log("Aginst trade id is", itemAgainstId);
-
     Promise.all([tradeModel.findOneAndUpdate({ "items._id": startedTradeItemId }, {
         $set: {
             "items.$.status": "Available",
@@ -282,8 +314,6 @@ exports.manageOffer = (req, res, next) => {
     Promise.all([tradeModel.findOne( {"items._id": itemAgainstId},{items:{$elemMatch:{_id:itemAgainstId}}}), tradeModel.findOne( {"items._id":startedTradeItemId},{items:{$elemMatch:{_id:startedTradeItemId}}})])
     .then(result => {
         const [itemAgainst, itemStarted] = result;
-        console.log("Item against", itemAgainst)
-        console.log("Item started", itemStarted)
         res.render('./item/manage', {itemAgainst, itemStarted});
     })
     .catch(err => next(err))
