@@ -220,6 +220,7 @@ exports.watch = (req, res, next) => {
 
     watchModel.findOneAndUpdate({ "user": req.session.user }, { $push: { watchedItems: item } }, { upsert: true })
         .then(result => {
+            req.flash('success', 'Item watched');
             res.redirect('/users/profile');
         })
         .catch(err => next(err));
@@ -276,6 +277,7 @@ exports.completeTrade = (req, res, next) => {
         }
     })
     ]).then(result => {
+        req.flash('success', 'Item Trade Request complete');
         res.redirect('/users/profile');
     })
         .catch(err => next(err))
@@ -302,6 +304,7 @@ exports.cancelTrade = (req, res, next) => {
         }
     })
     ]).then(result => {
+        req.flash('success', 'Item trade cancelled');
         res.redirect('/users/profile');
     })
         .catch(err => next(err))
@@ -335,6 +338,7 @@ exports.acceptOffer = (req, res, next) => {
         }
     })
     ]).then(result => {
+        req.flash('success', 'Trade complete');
         res.redirect('/users/profile');
     })
         .catch(err => next(err))

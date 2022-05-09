@@ -16,6 +16,7 @@ exports.create = ((req, res, next) => {
     let user = new User(req.body);
     user.save()
         .then(() => {
+            req.flash('success', "Successfully registered");
             res.redirect('./users/login');
         })
         .catch(err => {
