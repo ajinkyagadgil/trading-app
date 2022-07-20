@@ -1,0 +1,58 @@
+<%- include('../partials/header.ejs')%>
+    <div class="container">
+        <div class="card trade-details">
+            <div class="card-body">
+                <div class="productDescriptionTop">
+                    <h3 class="card-title">
+                        <%= tradeItem.item.itemName%>
+                        <span class="item-status-show">[ <%= tradeItem.item.status%> ]</span>
+
+                    </h3>
+                    <%if(user==tradeItem.item.user && tradeItem.item.status != "Traded") {%>
+                        <a class="describe-top-btn btn btn-dark"
+                            href="/trades/<%= tradeItem.item._id%>/edit?category=<%=tradeItem._id%>">Edit</a>
+                        <form>
+
+                            <button type="submit" class="describe-top-btn btn btn-danger" formmethod="POST"
+                                formaction="/trades/<%= tradeItem.item._id%>?_method=DELETE&category=<%=tradeItem._id%>">Delete</button>
+                        </form>
+                        <%}%>
+
+                </div>
+                <div class="row">
+                    <div class="col-lg-5 col-md-5 col-sm-6">
+                        <div><img src="<%= tradeItem.item.itemImage%>" class="trade-details-image"
+                                alt="<%= tradeItem.item.itemName%>"></div>
+                    </div>
+                    <div class="col-lg-7 col-md-7 col-sm-6">
+                        <h4 class="box-title mt-5">Product description</h4>
+                        <p>
+                            <%= tradeItem.item.itemDescription%>
+                        </p>
+                        <%if(user !=tradeItem.item.user) {%>
+                            <form>
+                                <input type="hidden" id="itemName" name="itemName" value="<%= tradeItem.item.itemName%>">
+                                <%if(user!= tradeItem.item.user && tradeItem.item.status == "Available") {%>
+                                    
+                                <a href="/trades/<%= tradeItem.item._id%>/itemOffer%>" class="btn btn-dark dark-weight-btn">Trade</a>
+                                <%}%>
+                                <% if(watchList) {%>
+                                    <% if(watchList.watchedItems.length > 0) { %>
+                                        <button type="submit" class=" btn btn-outline-dark btn-login" formmethod="POST" formaction="/trades/<%= watchList.watchedItems[0]._id%>/unwatch">Unwatch</button>
+                                   <% }
+                                   else { %>
+                                       <button type="submit" class=" btn btn-outline-dark btn-login" formmethod="POST" formaction="/trades/<%= tradeItem.item._id%>/watch">Watch</button>
+                                   <% }
+                                 }
+                                else {%>
+                                    <button type="submit" class=" btn btn-outline-dark btn-login" formmethod="POST" formaction="/trades/<%= tradeItem.item._id%>/watch">Watch</button>
+                                <%}%>
+                               
+                            </form>
+                        <%}%>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <%- include('../partials/footer.ejs')%>

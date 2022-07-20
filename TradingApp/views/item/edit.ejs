@@ -1,0 +1,23 @@
+<%- include('../partials/header.ejs')%>
+<div class="container">
+    <form class="new-trade-form" method="POST" action="/trades/<%= tradeItem.item._id%>?_method=PUT&category=<%= tradeItem._id%>">       
+        <div class="form-group">
+            <label for="category">Category</label>
+            <input type="text" class="form-control" name="categoryName" value="<%= tradeItem.categoryName%>" id="category" placeholder="Category" required>
+        </div>
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" class="form-control" name="itemName" value="<%= tradeItem.item.itemName%>" id="name" placeholder="Name" required>
+        </div>
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea class="form-control" name="itemDescription" id="description" rows="3"
+                placeholder="Enter description" required><%= tradeItem.item.itemDescription%></textarea>
+        </div>
+        <div class="form-group btn-create-trade">
+            <button type="submit" class="btn btn-outline-success">Edit Trade</button>
+        </div>
+    </form>
+
+</div>
+<%- include('../partials/footer.ejs')%>

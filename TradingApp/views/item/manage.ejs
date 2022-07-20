@@ -1,0 +1,42 @@
+<%- include('../partials/header.ejs')%>
+<div class="row">
+    <div class="col-sm-4">
+        <div class="card">
+            <img class="card-img-top" alt="Card image cap" src="<%= itemAgainst.items[0].itemImage%>">
+            <div class="card-body">
+              <h5 class="card-title"><%= itemAgainst.items[0].itemName%></h5>
+              <p class="card-text"><%= itemAgainst.items[0].itemDescription%></p>
+            </div>
+          </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="card">
+          <img class="card-img-top" alt="Card image cap" src="<%= itemStarted.items[0].itemImage%>">
+            <div class="card-body">
+              <h5 class="card-title"><%= itemStarted.items[0].itemName%></h5>
+              <p class="card-text"><%= itemStarted.items[0].itemDescription%></p>
+            </div>
+          </div>
+    </div>
+    <div class="col-sm-4">
+        <%if(itemAgainst.items[0].trade.itemToTradeUser == user) {%>
+          <form>
+            <input type="hidden" id="startedTradeItemId" name="startedTradeItemId" value="<%= itemAgainst.items[0].trade.itemToTradeId%>">
+            <td> <button type="submit" class=" btn btn-outline-dark btn-login" formmethod="POST" formaction="/trades/<%= itemAgainst.items[0]._id%>/itemOffer/cancel">Cancel Offer</button></td>
+          </form>
+        <%}
+        else {%>
+          <form>
+            <input type="hidden" id="itemAgainstId" name="itemAgainstId" value="<%= itemAgainst.items[0]._id%>">
+            <button type="submit" class=" btn btn-outline-dark btn-login" formmethod="POST" formaction="/trades/<%= itemAgainst.items[0].trade.itemTradedAgainstId%>/itemOffer/accept">Accept</button>
+          </form>
+          <form>
+            
+            <input type="hidden" id="startedTradeItemId" name="startedTradeItemId" value="<%= itemAgainst.items[0].trade.itemTradedAgainstId%>">
+            <td> <button type="submit" class=" btn btn-outline-dark btn-login" formmethod="POST" formaction="/trades/<%= itemAgainst.items[0]._id%>/itemOffer/cancel">Cancel Offer</button></td>
+          </form>
+        <%}%>
+    </div>
+   
+  </div>
+<%- include('../partials/footer.ejs')%>
